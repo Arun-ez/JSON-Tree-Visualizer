@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { cookies } from "next/headers";
 import { Toaster } from "sonner";
 
 const font = Poppins(
@@ -15,10 +16,17 @@ export const metadata: Metadata = {
   description: "Json tree visualizer",
 };
 
-const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
+
+  const cookie = await cookies()
+
+  const displayMode = cookie.get('theme')?.value || '';
+
   return (
-    <html lang="en">
-      <body className={`${font.className} antialiased`}>
+    <html lang="en" className={displayMode}>
+      <body
+        className={`${font.className} antialiased bg-white text-black/95 dark:bg-black/95 dark:text-white transition-b duration-300`}
+      >
         <Toaster />
         {children}
       </body>
