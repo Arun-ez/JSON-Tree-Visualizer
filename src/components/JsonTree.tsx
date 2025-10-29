@@ -1,8 +1,10 @@
 'use client';
 import '@xyflow/react/dist/style.css';
+
+import { toast } from 'sonner';
 import { Search } from 'lucide-react';
 import { useCallback, useState, FormEvent, useEffect } from 'react';
-import { addEdge, applyEdgeChanges, applyNodeChanges, Background, BackgroundVariant, Controls, ReactFlow, useReactFlow, } from '@xyflow/react';
+import { addEdge, applyEdgeChanges, applyNodeChanges, Background, BackgroundVariant, Controls, ReactFlow, useReactFlow } from '@xyflow/react';
 
 interface FlowTree {
     initialNodes: any[];
@@ -29,20 +31,29 @@ const JsonTree = ({ tree }: { tree: FlowTree }) => {
         [],
     );
 
-    const onSearch = useCallback((e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const id = new FormData(e.currentTarget).get('query');
-        const node = nodes.find((node) => node.id == id);
-        if (node) setCenter(node.position.x, node.position.y, { zoom: 1, duration: 800 });
-    }, []);
+    const onSearch = useCallback(
+        (e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const id = new FormData(e.currentTarget).get('query');
+            const node = nodes.find((node) => node.id == id);
+            if (node) {
+                setCenter(node.position.x, node.position.y, { zoom: 1, duration: 800 });
+            } else {
+                toast.error('No matches found');
+            }
+        },
+        []
+    );
 
-
-    useEffect(() => {
-        if (nodes.length > 0) {
-            const { x, y } = nodes[0].position;
-            setViewport({ x: x - 200, y: y + 200, zoom: 1.2 }, { duration: 400 });
-        }
-    }, [nodes, setViewport]);
+    useEffect(
+        () => {
+            if (nodes.length > 0) {
+                const { x, y } = nodes[0].position;
+                setViewport({ x: x - 200, y: y + 200, zoom: 1.2 }, { duration: 400 });
+            }
+        },
+        [nodes, setViewport]
+    );
 
     return (
         <div className='w-2/3 relative'>

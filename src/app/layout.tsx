@@ -1,8 +1,8 @@
 import "@/styles/globals.css";
-import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
-import { cookies } from "next/headers";
 import { Toaster } from "sonner";
+import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { Poppins } from "next/font/google";
 
 const font = Poppins(
   {
@@ -27,7 +27,7 @@ const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>)
       <body
         className={`${font.className} antialiased bg-white text-black/95 dark:bg-black/95 dark:text-white transition-b duration-300`}
       >
-        <Toaster />
+        <Toaster position="top-right" />
         {children}
       </body>
     </html>

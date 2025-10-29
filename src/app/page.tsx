@@ -1,9 +1,10 @@
 'use client';
+import { toast } from "sonner";
 import { sample_json } from "@/data/sample-json";
 import { JsonTree } from "@/components/JsonTree";
 import { ReactFlowProvider } from "@xyflow/react";
+import { useCallback, useState, useEffect } from "react";
 import { DisplayModeSwitcher } from "@/components/display-mode-switcher";
-import { useCallback, useState, ClipboardEvent, useEffect } from "react";
 
 interface FlowTree {
   initialNodes: any[];
@@ -119,26 +120,19 @@ const home = () => {
     })
   }, [])
 
-  const formatJson = useCallback((input: string): string => {
+  const formatJson = useCallback(() => {
 
     try {
-      const json = JSON.parse(input);
-      const formatted = JSON.stringify(json, null, 4);
-      return formatted;
+      const data = JSON.parse(json);
+      const formatted = JSON.stringify(data, null, 4);
+      setJson(formatted);
     } catch (error) {
-      return '';
+      toast.error('Invalid Json');
     }
 
-  }, []);
+  }, [json]);
 
-  const onPaste = useCallback((e: ClipboardEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-    const data = e.clipboardData.getData('text');
-    const formatted = formatJson(data);
-    setJson(formatted);
-  }, []);
-
-  const onReset = useCallback(() => {
+  const onClear = useCallback(() => {
     setJson('');
     setTree({
       initialNodes: [],
@@ -156,27 +150,40 @@ const home = () => {
         <textarea
           className="w-full h-full text-sm resize-none text-blue-900 dark:text-gray-300 focus:outline-none p-4 scrollbar-none"
           placeholder="Paste or Type JSON data"
-          onPaste={onPaste}
           value={json}
           onChange={(e) => setJson(e.target.value)}
         />
         <div className="bg-black/95 dark:bg-black/50 absolute left-0 right-0 bottom-0 p-4 flex justify-end items-center gap-4 rounded-t-xl border-t border-gray-900">
-          <button
-            className="bg-white h-11 px-4 rounded-full text-sm text-black"
-            onClick={onReset}
-          >
-            Reset
-          </button>
-          <button
-            className="bg-white h-11 px-4 rounded-full text-sm text-black"
-            onClick={() => onVisualize(JSON.parse(json))}
-          >
-            Visualize
-          </button>
           <div className="flex items-center gap-2 border h-11 px-4 rounded-full bg-white text-black text-sm">
             <DisplayModeSwitcher />
             <p> Dark Mode </p>
           </div>
+          <button
+            className="bg-white h-11 px-4 rounded-full text-sm text-black"
+            onClick={formatJson}
+          >
+            Format
+          </button>
+          <button
+            className="bg-white h-11 px-4 rounded-full text-sm text-black"
+            onClick={onClear}
+          >
+            Clear
+          </button>
+          <button
+            className="bg-white h-11 px-4 rounded-full text-sm text-black"
+            onClick={
+              () => {
+                try {
+                  onVisualize(JSON.parse(json))
+                } catch (error) {
+                  toast.error('Invalid Json');
+                }
+              }
+            }
+          >
+            Visualize
+          </button>
         </div>
       </div>
       <ReactFlowProvider>
