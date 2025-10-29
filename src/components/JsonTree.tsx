@@ -37,7 +37,7 @@ const JsonTree = ({ tree }: { tree: FlowTree }) => {
             const id = new FormData(e.currentTarget).get('query');
             const node = nodes.find((node) => node.id == id);
             if (node) {
-                setCenter(node.position.x, node.position.y, { zoom: 1, duration: 800 });
+                setCenter(node.position.x, node.position.y, { zoom: 1.4, duration: 800 });
             } else {
                 toast.error('No matches found');
             }
